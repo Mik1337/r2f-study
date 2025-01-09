@@ -18,11 +18,10 @@ export default function Home() {
   return (
     <div className="flex bg-red-100  justify-center items-center h-screen">
       <Canvas>
-        <ambientLight intensity={0.1} />
-        <spotLight position={[0, 10, 10]} angle={0.15} penumbra={1} />
-        <pointLight position={[10, 10, -10]} />
-        <OrbitControls ref={controlsRef} />
+        <ambientLight position={[0, 0, 5]} intensity={10} />
+        <directionalLight position={[0, 0, 5]} intensity={10} />
         <MeshComponent />
+        <OrbitControls />
       </Canvas>
     </div>
   );
@@ -33,8 +32,11 @@ function MeshComponent() {
   const mesh = useRef(null);
   const gltf = useLoader(GLTFLoader, fileUrl);
 
+  // Re-add the useFrame hook to rotate the object
   useFrame(() => {
-    mesh.current.rotation.y += 0.01;
+    if (mesh.current) {
+      mesh.current.rotation.y += 0.01;
+    }
   });
 
   return (
