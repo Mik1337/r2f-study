@@ -1,19 +1,27 @@
 "use client";
 import { ModelViewer } from "@/gltf";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { Mesh } from "three";
 
 export default function Home() {
+  const controlsRef = useRef();
+
+  useEffect(() => {
+    const controls = controlsRef.current;
+    if (controls) {
+      console.log("Orbit position:", controls.target);
+    }
+  }, []);
+
   return (
-    <div className="flex bg-red-50 justify-center items-center h-screen">
-      <Canvas className="h-2xl w-2xl">
-        <ambientLight intensity={0.3} />
-        {/* <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} /> */}
-        <pointLight position={[-10, -10, -10]} />
-        <OrbitControls />
+    <div className="flex bg-red-100  justify-center items-center h-screen">
+      <Canvas>
+        <ambientLight intensity={0.1} />
+        <spotLight position={[0, 10, 10]} angle={0.15} penumbra={1} />
+        <pointLight position={[10, 10, -10]} />
+        <OrbitControls ref={controlsRef} />
         <MeshComponent />
       </Canvas>
     </div>
@@ -21,17 +29,17 @@ export default function Home() {
 }
 
 function MeshComponent() {
-  const fileUrl = "/Tshirt.glb";
+  const fileUrl = "/untitled.glb";
   const mesh = useRef(null);
   const gltf = useLoader(GLTFLoader, fileUrl);
 
   useFrame(() => {
-    mesh.current.rotation.x += 0.01;
+    mesh.current.rotation.y += 0.01;
   });
 
   return (
     <mesh ref={mesh}>
-      <primitive object={gltf.scene} />
+      <primitive object={gltf.scene} position={[0, 0, 0]} />
     </mesh>
   );
 }
