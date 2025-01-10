@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useEffect } from "react";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import {
   GizmoHelper,
   GizmoViewcube,
@@ -23,49 +23,58 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flexjustify-center items-center h-screen">
-      <Canvas>
-        {/* Gizmo Wrapper */}
-        {/* <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+    <div className="flex flex-col justify-center items-center h-screen">
+      <div className="p-10  w-full last:flex flex-col justify-center items-center h-screen">
+        <h1 className="text-7xl">A Shirt</h1>
+        <Canvas>
+          <CameraController />
+          {/* Gizmo Wrapper */}
+          {/* <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
           <GizmoViewport />
           <GizmoViewcube />
         </GizmoHelper>
         <gridHelper args={[20, 20, 0xff22aa, 0x55ccff]} /> */}
-        {/* <AnimatedBox /> */}
-        <TShirt fileUrl="/untitled.glb" scale={1} position={[0, 0, 0]} />
-        {/* <SpotLightWithHelper
+          {/* <AnimatedBox /> */}
+          <TShirt fileUrl="/untitled.glb" scale={1} position={[0, 0, 0]} />
+          {/* <SpotLightWithHelper
           intensity={200}
           position={[1, 5, 0]}
           angle={Math.PI / 8}
         /> */}
-        {/* <ambientLight color={0xfcfcfc} /> */}
-        {/* front */}
-        <DirectionalLightWithHelper
-          color="0x000"
-          intensity={30}
-          position={[1, 0, 10]}
-        />
-        {/* back */}
-        <DirectionalLightWithHelper
-          color="0x000"
-          intensity={30}
-          position={[-1, 0, -10]}
-        />
-        {/* right */}
-        <DirectionalLightWithHelper
-          color="red"
-          intensity={50}
-          position={[-10, 0, 0]}
-        />
-        {/* left */}
-        <DirectionalLightWithHelper
-          color="yellow"
-          intensity={100}
-          position={[10, 0, 0]}
-        />
+          {/* <ambientLight color={0xfcfcfc} /> */}
+          {/* front */}
+          <DirectionalLightWithHelper
+            color="0x000"
+            intensity={30}
+            position={[1, 0, 10]}
+          />
+          {/* back */}
+          <DirectionalLightWithHelper
+            color="0x000"
+            intensity={30}
+            position={[-1, 0, -10]}
+          />
+          {/* right */}
+          <DirectionalLightWithHelper
+            color="red"
+            intensity={50}
+            position={[-10, 0, 0]}
+          />
+          {/* left */}
+          <DirectionalLightWithHelper
+            color="yellow"
+            intensity={100}
+            position={[10, 0, 0]}
+          />
 
-        <OrbitControls />
-      </Canvas>
+          <OrbitControls
+            minDistance={5}
+            maxDistance={20}
+            minPolarAngle={Math.PI / 4}
+            maxPolarAngle={Math.PI / 2}
+          />
+        </Canvas>
+      </div>
     </div>
   );
 }
@@ -126,7 +135,7 @@ function TShirt({ fileUrl = "untitled.glb", position = [0, 0, 0] }, scale = 1) {
   // Re-add the useFrame hook to rotate the object
   useFrame(() => {
     if (mesh.current) {
-      mesh.current.rotation.y += 0.01;
+      mesh.current.rotation.y += 0.005;
     }
   });
 
@@ -135,6 +144,23 @@ function TShirt({ fileUrl = "untitled.glb", position = [0, 0, 0] }, scale = 1) {
       <primitive object={gltf.scene} position={position} />
     </mesh>
   );
+}
+
+function CameraController() {
+  const { camera } = useThree();
+
+  useEffect(() => {
+    // Set the camera position
+    camera.position.set(10, 2, 5);
+
+    // Set the camera rotation
+    camera.rotation.set(0, Math.PI / 4, 0);
+
+    // Update the camera
+    camera.updateProjectionMatrix();
+  }, [camera]);
+
+  return null;
 }
 
 function AnimatedBox() {
