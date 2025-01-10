@@ -39,10 +39,29 @@ export default function Home() {
           angle={Math.PI / 8}
         /> */}
         {/* <ambientLight color={0xfcfcfc} /> */}
+        {/* front */}
         <DirectionalLightWithHelper
           color="0x000"
           intensity={30}
-          position={[1, 2, 10]}
+          position={[1, 0, 10]}
+        />
+        {/* back */}
+        <DirectionalLightWithHelper
+          color="0x000"
+          intensity={30}
+          position={[-1, 0, -10]}
+        />
+        {/* right */}
+        <DirectionalLightWithHelper
+          color="red"
+          intensity={50}
+          position={[-10, 0, 0]}
+        />
+        {/* left */}
+        <DirectionalLightWithHelper
+          color="yellow"
+          intensity={100}
+          position={[10, 0, 0]}
         />
 
         <OrbitControls />
@@ -58,7 +77,14 @@ function DirectionalLightWithHelper({
   color = "0xff22aa",
 }) {
   const light = useRef();
-  useHelper(light, DirectionalLightHelper, 2, "crimson");
+
+  // useHelper(light, DirectionalLightHelper, 2, color);
+
+  // useFrame(({ clock }) => {
+  //   const elapsedTime = clock.getElapsedTime();
+  //   light.current.position.x = radius * Math.cos(elapsedTime * speed);
+  //   light.current.position.z = radius * Math.sin(elapsedTime * speed);
+  // });
 
   return (
     <directionalLight
