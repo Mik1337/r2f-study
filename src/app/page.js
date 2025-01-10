@@ -26,13 +26,13 @@ export default function Home() {
     <div className="flexjustify-center items-center h-screen">
       <Canvas>
         {/* Gizmo Wrapper */}
-        <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+        {/* <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
           <GizmoViewport />
           <GizmoViewcube />
         </GizmoHelper>
-        <gridHelper args={[20, 20, 0xff22aa, 0x55ccff]} />
+        <gridHelper args={[20, 20, 0xff22aa, 0x55ccff]} /> */}
         {/* <AnimatedBox /> */}
-        <TShirt fileUrl="/untitled.glb" scale={10} />
+        <TShirt fileUrl="/untitled.glb" scale={1} position={[0, 0, 0]} />
         {/* <SpotLightWithHelper
           intensity={200}
           position={[1, 5, 0]}
@@ -41,7 +41,7 @@ export default function Home() {
         {/* <ambientLight color={0xfcfcfc} /> */}
         <DirectionalLightWithHelper
           color="0x000"
-          intensity={50}
+          intensity={30}
           position={[1, 2, 10]}
         />
 
