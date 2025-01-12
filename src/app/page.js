@@ -47,7 +47,7 @@ export default function Home() {
           </GizmoHelper>
           <gridHelper args={[20, 20, 0xff22aa, 0x55ccff]} />
           {/* <AnimatedBox /> */}
-          <TShirt fileUrl={fileUrl.url} scale={10} position={[0, 0, 0]} />
+          <ObjectView fileUrl={fileUrl.url} scale={10} position={[0, 0, 0]} />
           {/* <SpotLightWithHelper
           intensity={200}
           position={[1, 5, 0]}
@@ -56,24 +56,28 @@ export default function Home() {
           {/* <ambientLight color={0xfcfcfc} /> */}
           {/* front */}
           <DirectionalLightWithHelper
+            id="Front"
             color="0x000"
             intensity={200}
-            position={[1, 0, 10]}
+            position={[0, 0, 10]}
           />
           {/* back */}
           <DirectionalLightWithHelper
+            id="Back"
             color="0x000"
             intensity={200}
-            position={[-1, 0, -10]}
+            position={[0, 0, -10]}
           />
           {/* right */}
           <DirectionalLightWithHelper
+            id="Right"
             color="red"
             intensity={200}
             position={[-10, 0, 0]}
           />
           {/* left */}
           <DirectionalLightWithHelper
+            id="Left"
             color="yellow"
             intensity={200}
             position={[10, 0, 0]}
@@ -86,35 +90,17 @@ export default function Home() {
             maxPolarAngle={Math.PI / 2}
           />
         </Canvas>
-        <div className="fle w-full items-center justify-center">
-          <div className="flex overflow-xscroll h-8 w-full">
-            {objs.map((obj, index) => (
-              <div
-                key={index}
-                className="cursor-pointer p-2 hover:bg-gray-800"
-                onClick={() => selectFile(index)}
-              >
-                {obj.name}
-              </div>
-            ))}
-          </div>
-          <div className="flex items-center w-full justify-end">
-            <label>obj file</label>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
+
+        <div className="flex overflow-xscroll h-8 w-full">
+          {objs.map((obj, index) => (
+            <div
+              key={index}
+              className="cursor-pointer p-2 hover:bg-gray-800"
+              onClick={() => selectFile(index)}
             >
-              <input
-                name="fileurl"
-                type="url"
-                className="bg-slate-500 color:white"
-                pattern=".*\.glb$"
-                title="Please enter a URL ending with .glb"
-              />
-              <button>load</button>
-            </form>
-          </div>
+              {obj.name}
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -122,6 +108,7 @@ export default function Home() {
 }
 
 function DirectionalLightWithHelper({
+  id,
   intensity,
   position,
   angle = 0,
@@ -129,33 +116,116 @@ function DirectionalLightWithHelper({
 }) {
   const light = useRef();
 
-  useHelper(light, DirectionalLightHelper, 2, color);
+  let { vIntensity, vAngle, vColor, vPosX, vPosY, vPosZ } = useControls(
+    `${id} Directional Light Helpers`,
+    {
+      vIntensity: {
+        value: intensity,
+        min: 0,
+        max: 500,
+        step: 1,
+      },
+      vAngle: {
+        value: angle,
+        min: -500,
+        max: Math.PI * 2,
+        step: 0.01,
+      },
+      vPosX: {
+        value: position[0],
+        min: -10,
+        max: 10,
+        step: 1,
+      },
+      vPosY: {
+        value: position[1],
+        min: -10,
+        max: 10,
+        step: 1,
+      },
+      vPosZ: {
+        value: position[2],
+        min: -10,
+        max: 10,
+        step: 1,
+      },
+      vColor: {
+        value: color,
+      },
+    }
+  );
+  const [pos, setPos] = useState(position);
+  const [int, setInte] = useState(intensity);
+  const [ang, setAngle] = useState(angle);
+  const [col, setColor] = useState(color);
 
-  // useFrame(({ clock }) => {
-  //   const elapsedTime = clock.getElapsedTime();
-  //   light.current.position.x = radius * Math.cos(elapsedTime * speed);
-  //   light.current.position.z = radius * Math.sin(elapsedTime * speed);
-  // });
+  useHelper(light, DirectionalLightHelper, 2, col);
+
+  useEffect(() => {
+    setPos([vPosX, vPosY, vPosZ]);
+  }, [vPosX, vPosY, vPosZ]);
+
+  useEffect(() => {
+    setAngle(vAngle);
+  }, [vAngle]);
+
+  useEffect(() => {
+    setColor(vColor);
+  }, [vColor]);
+
+  useEffect(() => {
+    setInte(vIntensity);
+  }, [vIntensity]);
 
   return (
     <directionalLight
       ref={light}
-      intensity={intensity}
-      position={position}
-      angle={angle}
-      color={color}
+      intensity={int}
+      position={pos}
+      angle={ang}
+      color={col}
       castShadow
     />
   );
 }
 
-function SpotLightWithHelper({
-  intensity,
-  position,
-  angle = 0,
-  color = "0x000",
-}) {
+function SpotLightWithHelper() {
   const light = useRef();
+
+  let { color, intensity, angle, positionX, positionY, positionZ } =
+    useControls("Spotlight Contorls", {
+      color: { value: "white" },
+      intensity: {
+        value: 100,
+        min: 0,
+        max: 100,
+        step: 1,
+      },
+      angle: {
+        value: 0,
+        min: 0,
+        max: Math.PI * 2,
+        step: 0.01,
+      },
+      positionX: {
+        value: 0,
+        min: 0,
+        max: 50,
+        step: 1,
+      },
+      positionY: {
+        value: 0,
+        min: 0,
+        max: 50,
+        step: 1,
+      },
+      positionZ: {
+        value: 0,
+        min: 0,
+        max: 50,
+        step: 1,
+      },
+    });
 
   useHelper(light, SpotLightHelper, "orange");
 
@@ -163,36 +233,66 @@ function SpotLightWithHelper({
     <spotLight
       ref={light}
       intensity={intensity}
-      position={position}
+      position={[positionX, positionY, positionZ]}
       angle={angle}
       color={color}
     />
   );
 }
 
-function TShirt({ fileUrl = "untitled.glb", position = [0, 0, 0] }, scale = 1) {
+function ObjectView({ fileUrl = "untitled.glb", position = [0, 0, 0] }) {
   const mesh = useRef(null);
   const gltf = useLoader(GLTFLoader, fileUrl);
 
-  let { speed } = useControls({
-    speed: {
-      value: 0.005,
-      min: 0.0,
-      max: 0.03,
-      step: 0.001,
-    },
-  });
+  let { speed, scale, positionX, positionY, positionZ } = useControls(
+    "Object Helpers",
+    {
+      speed: {
+        value: 0.005,
+        min: 0.0,
+        max: 0.03,
+        step: 0.001,
+      },
+      scale: {
+        value: 1,
+        min: 1,
+        max: 10,
+        step: 0.5,
+      },
+      positionX: {
+        value: 0,
+        min: -10,
+        max: 10,
+        step: 1,
+      },
+      positionY: {
+        value: 0,
+        min: -10,
+        max: 10,
+        step: 1,
+      },
+      positionZ: {
+        value: 0,
+        min: -10,
+        max: 10,
+        step: 1,
+      },
+    }
+  );
 
   // Re-add the useFrame hook to rotate the object
   useFrame(() => {
     if (mesh.current) {
-      mesh.current.rotation.y += 0.005;
+      mesh.current.rotation.y += speed;
     }
   });
 
   return (
-    <mesh ref={mesh} scale={2}>
-      <primitive object={gltf.scene} position={position} />
+    <mesh ref={mesh} scale={scale}>
+      <primitive
+        object={gltf.scene}
+        position={[positionX, positionY, positionZ]}
+      />
     </mesh>
   );
 }
@@ -212,29 +312,4 @@ function CameraController() {
   }, [camera]);
 
   return null;
-}
-
-function AnimatedBox() {
-  const boxRef = useRef();
-
-  let { speed } = useControls({
-    speed: {
-      value: 0.005,
-      min: 0.0,
-      max: 0.03,
-      step: 0.001,
-    },
-  });
-
-  useFrame(() => {
-    // Animation Code
-    boxRef.current.rotation.y += speed;
-  });
-
-  return (
-    <mesh ref={boxRef}>
-      <boxGeometry args={[2, 3, 2]} />
-      <meshPhongMaterial color={0x00bfff} />
-    </mesh>
-  );
 }
