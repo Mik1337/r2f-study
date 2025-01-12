@@ -245,9 +245,8 @@ function SpotLightWithHelper() {
 function ObjectView({ fileUrl = "untitled.glb", position = [0, 0, 0] }) {
   const mesh = useRef(null);
 
-  let { speed, scale, positionX, positionY, positionZ, fileURL } = useControls(
-    "Object Helpers",
-    {
+  let { speed, scale, positionX, positionY, positionZ, filePathUrl } =
+    useControls("Object Helpers", {
       speed: {
         value: 0.005,
         min: 0.0,
@@ -278,11 +277,10 @@ function ObjectView({ fileUrl = "untitled.glb", position = [0, 0, 0] }) {
         max: 10,
         step: 1,
       },
-      fileURL: {
+      filePathUrl: {
         value: fileUrl,
       },
-    }
-  );
+    });
 
   const [pos, setPos] = useState(position);
   const [vFileUrl, setFileUrl] = useState(fileUrl);
@@ -299,8 +297,12 @@ function ObjectView({ fileUrl = "untitled.glb", position = [0, 0, 0] }) {
   }, [positionX, positionY, positionZ]);
 
   useEffect(() => {
-    setFileUrl(fileURL);
-  }, [fileURL]);
+    setFileUrl(filePathUrl);
+  }, [filePathUrl]);
+
+  useEffect(() => {
+    setFileUrl(fileUrl);
+  }, [fileUrl]);
 
   const gltf = useLoader(GLTFLoader, vFileUrl);
 
