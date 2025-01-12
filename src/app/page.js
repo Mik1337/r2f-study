@@ -18,6 +18,7 @@ const objs = [
   { name: "A Small Shirt", url: "/sample.glb" },
   { name: "A Shirt", url: "/untitled.glb" },
   { name: "Akiraaa", url: "/kaneadas-bike.glb" },
+  { name: "Another Shirt", url: "/wshirt.glb" },
 ];
 
 export default function Home() {
@@ -243,9 +244,8 @@ function SpotLightWithHelper() {
 
 function ObjectView({ fileUrl = "untitled.glb", position = [0, 0, 0] }) {
   const mesh = useRef(null);
-  const gltf = useLoader(GLTFLoader, fileUrl);
 
-  let { speed, scale, positionX, positionY, positionZ } = useControls(
+  let { speed, scale, positionX, positionY, positionZ, fileURL } = useControls(
     "Object Helpers",
     {
       speed: {
@@ -261,25 +261,31 @@ function ObjectView({ fileUrl = "untitled.glb", position = [0, 0, 0] }) {
         step: 0.5,
       },
       positionX: {
-        value: 0,
+        value: position[0],
         min: -10,
         max: 10,
         step: 1,
       },
       positionY: {
-        value: 0,
+        value: position[1],
         min: -10,
         max: 10,
         step: 1,
       },
       positionZ: {
-        value: 0,
+        value: position[2],
         min: -10,
         max: 10,
         step: 1,
       },
+      fileURL: {
+        value: fileUrl,
+      },
     }
   );
+
+  const [pos, setPos] = useState(position);
+  const [vFileUrl, setFileUrl] = useState(fileUrl);
 
   // Re-add the useFrame hook to rotate the object
   useFrame(() => {
@@ -288,12 +294,19 @@ function ObjectView({ fileUrl = "untitled.glb", position = [0, 0, 0] }) {
     }
   });
 
+  useEffect(() => {
+    setPos([positionX, positionY, positionZ]);
+  }, [positionX, positionY, positionZ]);
+
+  useEffect(() => {
+    setFileUrl(fileURL);
+  }, [fileURL]);
+
+  const gltf = useLoader(GLTFLoader, vFileUrl);
+
   return (
     <mesh ref={mesh} scale={scale}>
-      <primitive
-        object={gltf.scene}
-        position={[positionX, positionY, positionZ]}
-      />
+      <primitive object={gltf.scene} position={pos} />
     </mesh>
   );
 }
