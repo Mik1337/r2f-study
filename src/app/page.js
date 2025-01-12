@@ -9,7 +9,7 @@ import {
   useHelper,
 } from "@react-three/drei";
 import { DirectionalLightHelper, SpotLightHelper } from "three";
-// import { useControls } from "leva";
+import { useControls } from "leva";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 const objs = [
@@ -86,16 +86,35 @@ export default function Home() {
             maxPolarAngle={Math.PI / 2}
           />
         </Canvas>
-        <div className="flex overflow-xscroll h-8 w-full">
-          {objs.map((obj, index) => (
-            <div
-              key={index}
-              className="cursor-pointer p-2 hover:bg-gray-800"
-              onClick={() => selectFile(index)}
+        <div className="fle w-full items-center justify-center">
+          <div className="flex overflow-xscroll h-8 w-full">
+            {objs.map((obj, index) => (
+              <div
+                key={index}
+                className="cursor-pointer p-2 hover:bg-gray-800"
+                onClick={() => selectFile(index)}
+              >
+                {obj.name}
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center w-full justify-end">
+            <label>obj file</label>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
             >
-              {obj.name}
-            </div>
-          ))}
+              <input
+                name="fileurl"
+                type="url"
+                className="bg-slate-500 color:white"
+                pattern=".*\.glb$"
+                title="Please enter a URL ending with .glb"
+              />
+              <button>load</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -155,6 +174,15 @@ function TShirt({ fileUrl = "untitled.glb", position = [0, 0, 0] }, scale = 1) {
   const mesh = useRef(null);
   const gltf = useLoader(GLTFLoader, fileUrl);
 
+  let { speed } = useControls({
+    speed: {
+      value: 0.005,
+      min: 0.0,
+      max: 0.03,
+      step: 0.001,
+    },
+  });
+
   // Re-add the useFrame hook to rotate the object
   useFrame(() => {
     if (mesh.current) {
@@ -189,18 +217,18 @@ function CameraController() {
 function AnimatedBox() {
   const boxRef = useRef();
 
-  // let { speed } = useControls({
-  //   speed: {
-  //     value: 0.005,
-  //     min: 0.0,
-  //     max: 0.03,
-  //     step: 0.001,
-  //   },
-  // });
+  let { speed } = useControls({
+    speed: {
+      value: 0.005,
+      min: 0.0,
+      max: 0.03,
+      step: 0.001,
+    },
+  });
 
   useFrame(() => {
     // Animation Code
-    boxRef.current.rotation.y += 0.01;
+    boxRef.current.rotation.y += speed;
   });
 
   return (
