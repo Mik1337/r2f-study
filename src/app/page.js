@@ -17,6 +17,7 @@ const objs = [
   { name: "A Box", url: "/box.glb" },
   { name: "A Small Shirt", url: "/sample.glb" },
   { name: "A Shirt", url: "/untitled.glb" },
+  { name: "Akiraaa", url: "/kaneadas-bike.glb" },
 ];
 
 export default function Home() {
@@ -255,7 +256,7 @@ function ObjectView({ fileUrl = "untitled.glb", position = [0, 0, 0] }) {
       },
       scale: {
         value: 1,
-        min: 1,
+        min: -10,
         max: 10,
         step: 0.5,
       },
