@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import {
   GizmoHelper,
@@ -12,8 +12,20 @@ import { DirectionalLightHelper, SpotLightHelper } from "three";
 // import { useControls } from "leva";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
+const objs = [
+  { name: "Space Man", url: "/Astronaut.glb" },
+  { name: "A Box", url: "/box.glb" },
+  { name: "A Small Shirt", url: "/sample.glb" },
+  { name: "A Shirt", url: "/untitled.glb" },
+];
+
 export default function Home() {
+  const [fileUrl, setFileUrl] = useState(objs[0]);
   const controlsRef = useRef();
+
+  function selectFile(index) {
+    setFileUrl(objs[index]);
+  }
 
   useEffect(() => {
     const controls = controlsRef.current;
@@ -25,17 +37,17 @@ export default function Home() {
   return (
     <div className="flex flex-col justify-center items-center h-screen">
       <div className="p-10  w-full last:flex flex-col justify-center items-center h-screen">
-        <h1 className="text-7xl">A Shirt</h1>
+        <h1 className="text-7xl">{fileUrl.name}</h1>
         <Canvas>
           <CameraController />
           {/* Gizmo Wrapper */}
-          {/* <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
-          <GizmoViewport />
-          <GizmoViewcube />
-        </GizmoHelper>
-        <gridHelper args={[20, 20, 0xff22aa, 0x55ccff]} /> */}
+          <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+            <GizmoViewport />
+            <GizmoViewcube />
+          </GizmoHelper>
+          <gridHelper args={[20, 20, 0xff22aa, 0x55ccff]} />
           {/* <AnimatedBox /> */}
-          <TShirt fileUrl="/untitled.glb" scale={1} position={[0, 0, 0]} />
+          <TShirt fileUrl={fileUrl.url} scale={10} position={[0, 0, 0]} />
           {/* <SpotLightWithHelper
           intensity={200}
           position={[1, 5, 0]}
@@ -45,25 +57,25 @@ export default function Home() {
           {/* front */}
           <DirectionalLightWithHelper
             color="0x000"
-            intensity={30}
+            intensity={200}
             position={[1, 0, 10]}
           />
           {/* back */}
           <DirectionalLightWithHelper
             color="0x000"
-            intensity={30}
+            intensity={200}
             position={[-1, 0, -10]}
           />
           {/* right */}
           <DirectionalLightWithHelper
             color="red"
-            intensity={50}
+            intensity={200}
             position={[-10, 0, 0]}
           />
           {/* left */}
           <DirectionalLightWithHelper
             color="yellow"
-            intensity={100}
+            intensity={200}
             position={[10, 0, 0]}
           />
 
@@ -74,6 +86,17 @@ export default function Home() {
             maxPolarAngle={Math.PI / 2}
           />
         </Canvas>
+        <div className="flex overflow-xscroll h-8 w-full">
+          {objs.map((obj, index) => (
+            <div
+              key={index}
+              className="cursor-pointer p-2 hover:bg-gray-800"
+              onClick={() => selectFile(index)}
+            >
+              {obj.name}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -87,7 +110,7 @@ function DirectionalLightWithHelper({
 }) {
   const light = useRef();
 
-  // useHelper(light, DirectionalLightHelper, 2, color);
+  useHelper(light, DirectionalLightHelper, 2, color);
 
   // useFrame(({ clock }) => {
   //   const elapsedTime = clock.getElapsedTime();
@@ -140,7 +163,7 @@ function TShirt({ fileUrl = "untitled.glb", position = [0, 0, 0] }, scale = 1) {
   });
 
   return (
-    <mesh ref={mesh} scale={scale}>
+    <mesh ref={mesh} scale={2}>
       <primitive object={gltf.scene} position={position} />
     </mesh>
   );
