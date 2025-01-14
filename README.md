@@ -26,3 +26,5 @@ Do not use the assets in this project, they are only for study purposes; and som
 [Leva](https://github.com/pmndrs/leva)
 
 [Trellis](https://huggingface.co/spaces/JeffreyXiang/TRELLIS)
+
+[Load GLTF](https://gltf.pmnd.rs)
